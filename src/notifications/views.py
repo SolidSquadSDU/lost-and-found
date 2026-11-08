@@ -1,3 +1,2 @@
-from django.shortcuts import render
-
-# Create your views here.
+# TODO: list pending NotificationOutbox rows
+# TODO: mark a notification as SENT or FAILED after delivery
