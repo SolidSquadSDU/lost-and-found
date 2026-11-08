@@ -5,8 +5,8 @@ from django.conf import settings
 class Item(models.Model):
 
     class Status(models.TextChoices):
-        AVAILABLE = "Available", "AVAILABLE"
-        CLAIMED = "ClAIMED", "Claimed"
+        AVAILABLE = "AVAILABLE", "Available"
+        CLAIMED = "CLAIMED", "Claimed"
         RETURNED = "RETURNED", "Returned"
 
     reporter = models.ForeignKey(
