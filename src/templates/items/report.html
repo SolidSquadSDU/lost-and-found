@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Report a found item</h1>
+{# TODO: add photo upload and campus map picker #}
+<form method="post">
+  {% csrf_token %}
+  <label>Title <input name="title" required></label>
+  <label>Description <textarea name="description" rows="4" required></textarea></label>
+  <label>Found location <input name="found_location" required></label>
+  <button type="submit">Report</button>
+</form>
+{% endblock %}

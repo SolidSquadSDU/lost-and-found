@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Pending claims</h1>
+{# TODO: show only claims for items reported by the current user #}
+{% for claim in claims %}
+  <div class="item">
+    Claim #{{ claim.id }} on
+    <a href="{% url 'item_detail' claim.item_id %}">{{ claim.item.title }}</a>
+    by {{ claim.claimant.username }}
+    <p>{{ claim.reason }}</p>
+    {% if user.id == claim.item.reporter_id %}
+      <form method="post" action="{% url 'approve_claim' claim.id %}" style="display:inline">
+        {% csrf_token %}
+        <button type="submit">Approve</button>
+      </form>
+      <form method="post" action="{% url 'reject_claim' claim.id %}" style="display:inline">
+        {% csrf_token %}
+        <button type="submit">Reject</button>
+      </form>
+    {% endif %}
+  </div>
+{% empty %}
+  <p>No pending claims.</p>
+{% endfor %}
+{% endblock %}

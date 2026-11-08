@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ item.title }}</h1>
+<p><strong>Status:</strong> {{ item.status }}</p>
+<p><strong>Location:</strong> {{ item.found_location }}</p>
+<p><strong>Reporter:</strong> {{ item.reporter.username }}</p>
+<p>{{ item.description }}</p>
+
+{% if error %}
+  <p class="err">{{ error }}</p>
+{% endif %}
+
+{% if item.status == "AVAILABLE" and user.is_authenticated and user.id != item.reporter_id %}
+  <h2>Claim this item</h2>
+  {# TODO: add proof-of-ownership checklist fields #}
+  <form method="post" action="{% url 'create_claim' item.id %}">
+    {% csrf_token %}
+    <label>Why is this yours? <textarea name="reason" rows="3" required></textarea></label>
+    <button type="submit">Submit claim</button>
+  </form>
+{% elif not user.is_authenticated %}
+  <p><a href="{% url 'login' %}">Log in</a> to claim this item.</p>
+{% endif %}
+
+{% if claims %}
+  <h2>Claims</h2>
+  {% for claim in claims %}
+    <div class="item">
+      #{{ claim.id }} by {{ claim.claimant.username }} — {{ claim.status }}
+      {% if claim.status == "PENDING" and user.id == item.reporter_id %}
+        <form method="post" action="{% url 'approve_claim' claim.id %}" style="display:inline">
+          {% csrf_token %}
+          <button type="submit">Approve</button>
+        </form>
+        <form method="post" action="{% url 'reject_claim' claim.id %}" style="display:inline">
+          {% csrf_token %}
+          <button type="submit">Reject</button>
+        </form>
+      {% endif %}
+    </div>
+  {% endfor %}
+{% endif %}
+{% endblock %}

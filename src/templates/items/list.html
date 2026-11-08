@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Found items</h1>
+{# TODO: add filters by location/status and search #}
+{% for item in items %}
+  <div class="item">
+    <a href="{% url 'item_detail' item.id %}"><strong>{{ item.title }}</strong></a>
+    — {{ item.status }} — {{ item.found_location }}
+  </div>
+{% empty %}
+  <p>No items yet. Report a found item to start.</p>
+{% endfor %}
+{% endblock %}

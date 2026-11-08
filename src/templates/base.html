@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Campus Lost &amp; Found</title>
+  <style>
+    body { font-family: sans-serif; max-width: 720px; margin: 2rem auto; padding: 0 1rem; }
+    nav a { margin-right: 1rem; }
+    .msg { color: #0a0; }
+    .err { color: #a00; }
+    .item { border-bottom: 1px solid #ddd; padding: 0.75rem 0; }
+    label { display: block; margin-top: 0.75rem; }
+    input, textarea { width: 100%; max-width: 28rem; }
+    button { margin-top: 1rem; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="{% url 'item_list' %}">Items</a>
+    <a href="{% url 'report_item' %}">Report found item</a>
+    <a href="{% url 'pending_claims' %}">Pending claims</a>
+    {% if user.is_authenticated %}
+      <span>{{ user.username }}</span>
+      <a href="{% url 'logout' %}">Log out</a>
+    {% else %}
+      <a href="{% url 'login' %}">Log in</a>
+    {% endif %}
+  </nav>
+  <hr>
+  {% if messages %}
+    {% for message in messages %}
+      <p class="msg">{{ message }}</p>
+    {% endfor %}
+  {% endif %}
+  {% block content %}{% endblock %}
+  {# TODO: replace this minimal layout with a proper shared design system #}
+</body>
+</html>
