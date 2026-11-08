@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-tf^*4mm@kqv^_11c9hg8(16@!p==1o^m^i&bf#$r8=vgc8gu)5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "testserver"]
 
 
 # Application definition
@@ -58,7 +58,7 @@ ROOT_URLCONF = 'lostandfound.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -119,6 +119,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# TODO: move auth redirects behind University SSO when accounts app exists
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'item_list'
+LOGOUT_REDIRECT_URL = 'item_list'
 
 
 # Email

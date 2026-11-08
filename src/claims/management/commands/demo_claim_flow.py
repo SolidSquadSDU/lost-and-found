@@ -19,6 +19,11 @@ class Command(BaseCommand):
             username="claimant",
             defaults={"email": "claimant@campus.local"},
         )
+        # Password for the simple login UI (not for production)
+        reporter.set_password("pass123")
+        reporter.save(update_fields=["password"])
+        claimant.set_password("pass123")
+        claimant.save(update_fields=["password"])
 
         item = report_item(
             reporter=reporter,

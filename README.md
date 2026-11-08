@@ -10,10 +10,10 @@ One coherent flow is implemented: **report a found item → claim it → approve
 
 | Step | What happens |
 | --- | --- |
-| Input | `demo_claim_flow` calls the services (HTTP views are TODO fillers) |
+| Input | Web forms or `demo_claim_flow` |
 | Logic | `items.services` + `claims.services` + State pattern transitions |
 | Storage | Django models (`Item`, `Claim`, `NotificationOutbox`) in SQLite |
-| Result | Printed item/claim/notification status; also visible in `/admin/` |
+| Result | Pages under `/items/` and `/claims/`; also `/admin/` |
 
 ```bash
 python3 -m venv .venv
@@ -21,9 +21,17 @@ source .venv/bin/activate
 pip install "django==6.1.2"
 python src/manage.py migrate
 python src/manage.py demo_claim_flow
+python src/manage.py runserver
 ```
 
-Example output:
+Open http://127.0.0.1:8000/
+
+Demo users (password `pass123` for both):
+
+- `reporter` — reports items and approves/rejects claims
+- `claimant` — submits claims
+
+CLI demo still works:
 
 ```text
 Demo claim flow completed
@@ -33,7 +41,7 @@ Notification: CLAIM_CREATED [PENDING]
 Notification: CLAIM_APPROVED [PENDING]
 ```
 
-HTTP views, URL handlers, and automated tests are intentionally left as TODO fillers.
+Frontend is intentionally simple. Remaining work is marked with `TODO` in templates and views (SSO login, photo upload, filters, API routes, tests).
 
 ## Design pattern: State
 
@@ -49,13 +57,14 @@ Short `# State pattern:` comments in `src/claims/states.py` and `src/claims/serv
 ```text
 lost-and-found/
 ├── README.md
-├── docs/                 # architecture notes and decisions
+├── docs/
 └── src/
     ├── manage.py
-    ├── lostandfound/     # project settings and root URLs
-    ├── items/            # report found items
-    ├── claims/           # claim lifecycle + State pattern + demo command
-    └── notifications/    # notification outbox rows
+    ├── templates/        # simple HTML UI
+    ├── lostandfound/
+    ├── items/
+    ├── claims/
+    └── notifications/
 ```
 
 ## Architecture notes

@@ -21,7 +21,10 @@
     <a href="{% url 'pending_claims' %}">Pending claims</a>
     {% if user.is_authenticated %}
       <span>{{ user.username }}</span>
-      <a href="{% url 'logout' %}">Log out</a>
+      <form method="post" action="{% url 'logout' %}" style="display:inline">
+        {% csrf_token %}
+        <button type="submit">Log out</button>
+      </form>
     {% else %}
       <a href="{% url 'login' %}">Log in</a>
     {% endif %}
@@ -29,7 +32,7 @@
   <hr>
   {% if messages %}
     {% for message in messages %}
-      <p class="msg">{{ message }}</p>
+      <p class="{% if message.tags == 'error' %}err{% else %}msg{% endif %}">{{ message }}</p>
     {% endfor %}
   {% endif %}
   {% block content %}{% endblock %}

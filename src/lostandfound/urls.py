@@ -15,11 +15,20 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 from django.urls import include, path
+from django.views.generic import RedirectView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # TODO: replace empty app urlpatterns with real HTTP endpoints
+    path('', RedirectView.as_view(pattern_name='item_list'), name='home'),
+    path(
+        'login/',
+        auth_views.LoginView.as_view(template_name='registration/login.html'),
+        name='login',
+    ),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    # TODO: add University SSO callback routes under accounts/
     path('items/', include('items.urls')),
     path('claims/', include('claims.urls')),
 ]
