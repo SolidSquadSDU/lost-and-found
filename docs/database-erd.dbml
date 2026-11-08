@@ -1,0 +1,60 @@
+//dbdiagram.io
+Project LostAndFound {
+  database_type: 'SQLite'
+  Note: 'Solid Squad - Milestone 3 Database'
+}
+
+Table auth_user {
+  id integer [pk, increment]
+  username varchar(150) [not null, unique]
+  email varchar(254) [not null]
+
+  Note: 'Built-in Django User model (simplified)'
+}
+
+Table items_item {
+  id bigint [pk, increment]
+  reporter_id integer [not null]
+  title varchar(120) [not null]
+  description text [not null]
+  found_location varchar(200) [not null]
+  status varchar(20) [not null]
+  created_at datetime [not null]
+
+  Note: 'Stores reported found items'
+}
+
+Table claims_claim {
+  id bigint [pk, increment]
+  item_id bigint [not null]
+  claimant_id integer [not null]
+  reason text [not null]
+  status varchar(20) [not null]
+  created_at datetime [not null]
+
+  indexes {
+    (item_id, claimant_id) [unique, name: 'unique_claim_per_user_item']
+  }
+
+  Note: 'Ownership claims for found items'
+}
+
+Table notifications_notificationoutbox {
+  id bigint [pk, increment]
+  claim_id bigint [not null]
+  event_type varchar(20) [not null]
+  status varchar(10) [not null]
+  created_at datetime [not null]
+  processed_at datetime [null]
+
+  indexes {
+    (claim_id, event_type) [unique, name: 'unique_notification_per_claim_event']
+  }
+
+  Note: 'Stores notification events for later processing'
+}
+
+Ref: auth_user.id < items_item.reporter_id
+Ref: auth_user.id < claims_claim.claimant_id
+Ref: items_item.id < claims_claim.item_id
+Ref: claims_claim.id < notifications_notificationoutbox.claim_id
