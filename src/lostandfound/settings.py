@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'claims',
     'notifications',
     'audit',
+    'claim_stats',
 ]
 
 MIDDLEWARE = [
