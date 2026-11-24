@@ -1,9 +1,15 @@
+from uuid import uuid4
+
 from django.core.exceptions import ValidationError
+from django.db import transaction
+from django.utils import timezone
 
 from items.models import Item
 from notifications.models import NotificationOutbox
 
+from .events import ClaimApproved
 from .models import Claim
+from .publishers import publish_claim_approved
 from .states import get_claim_state
 
 
@@ -27,6 +33,7 @@ def create_claim(*, item, claimant, reason):
     return claim
 
 
+@transaction.atomic
 def approve_claim(claim):
     # State pattern: delegate approve to the current claim state
     claim = get_claim_state(claim).approve(claim)
@@ -35,6 +42,16 @@ def approve_claim(claim):
         event_type=NotificationOutbox.EventType.CLAIM_APPROVED,
         status=NotificationOutbox.Status.PENDING,
     )
+    event = ClaimApproved(
+        event_id=uuid4(),
+        occurred_at=timezone.now(),
+        claim_id=claim.pk,
+        item_id=claim.item_id,
+        claimant_id=claim.claimant_id,
+        reporter_id=claim.item.reporter_id,
+    )
+    # Consumers see committed approval data; a rollback discards this callback.
+    transaction.on_commit(lambda: publish_claim_approved(event))
     return claim
 
 

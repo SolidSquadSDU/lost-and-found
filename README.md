@@ -12,7 +12,7 @@ One coherent flow is implemented: **report a found item → claim it → approve
 | --- | --- |
 | Input | Web forms or `demo_claim_flow` |
 | Logic | `items.services` + `claims.services` + State pattern transitions |
-| Storage | Django models (`Item`, `Claim`, `NotificationOutbox`) in SQLite |
+| Storage | Django models (`Item`, `Claim`, `NotificationOutbox`, `HandoverTask`) in SQLite |
 | Result | Pages under `/items/` and `/claims/`; also `/admin/` |
 
 ```bash
@@ -42,6 +42,19 @@ Notification: CLAIM_APPROVED [PENDING]
 ```
 
 Frontend is intentionally simple. Remaining work is marked with `TODO` in templates and views (SSO login, photo upload, filters, API routes, tests).
+
+## Claim approval event
+
+After approval commits, `approve_claim()` publishes `ClaimApproved` through a
+shared Django signal. `HandoverTaskConsumer` creates one pending collection task,
+with database uniqueness preventing duplicate processing. Tasks are visible in
+Django Admin under **Claims → Handover tasks**.
+
+Apply the new migration with `python src/manage.py migrate`. Run the event tests
+with `python src/manage.py test claims.test_events -v 2`.
+
+See [the event and consumer guide](docs/event-driven-claims.md) for the event
+payload, teammate subscription examples, duplicate protection, and delivery limits.
 
 ## Design pattern: State
 
