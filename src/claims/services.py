@@ -37,11 +37,6 @@ def create_claim(*, item, claimant, reason):
 def approve_claim(claim):
     # State pattern: delegate approve to the current claim state
     claim = get_claim_state(claim).approve(claim)
-    NotificationOutbox.objects.create(
-        claim=claim,
-        event_type=NotificationOutbox.EventType.CLAIM_APPROVED,
-        status=NotificationOutbox.Status.PENDING,
-    )
     event = ClaimApproved(
         event_id=uuid4(),
         occurred_at=timezone.now(),

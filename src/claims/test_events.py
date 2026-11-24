@@ -124,7 +124,7 @@ class ClaimApprovedEventTests(TestCase):
         with patch("claims.services.publish_claim_approved") as publisher:
             with self.captureOnCommitCallbacks(execute=True) as callbacks:
                 with patch(
-                    "claims.services.NotificationOutbox.objects.create",
+                    "claims.services.ClaimApproved",
                     side_effect=RuntimeError("Outbox unavailable"),
                 ):
                     with self.assertRaisesMessage(RuntimeError, "Outbox unavailable"):
